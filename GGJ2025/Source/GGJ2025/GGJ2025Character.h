@@ -72,7 +72,7 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UGGJ2025CameraComponent* GetFollowCamera() const { return NewCamera; }
 
-	UPROPERTY(Transient)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
 	class AGGJ2025Passenger* FollowingPassenger;
 
 private:
