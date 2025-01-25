@@ -27,4 +27,7 @@ class UGGJ2025Placeable : public USceneComponent
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Placeable", meta = (AllowPrivateAccess = "true"))
 	TArray<UGGJ2025Placeable*> LinkedObjects;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Placeable", meta = (AllowPrivateAccess = "true"))
+	class UGGJ2025InteractableComponent* InteractionComponent;
 };
