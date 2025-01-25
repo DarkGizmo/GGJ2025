@@ -32,6 +32,8 @@ public:
 	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 
 	void StartFollowPlayer(class AGGJ2025Character* player);
+
+	UFUNCTION(BlueprintCallable)
 	void StopFollowPlayer();
 
 protected:
