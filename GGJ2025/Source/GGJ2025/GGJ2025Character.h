@@ -39,9 +39,18 @@ class AGGJ2025Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 
+	UPROPERTY(EditDefaultsOnly)
+	float MaxInteractionDistance = 100.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float MaxInteractionDot = 0.5f;
+
+
 public:
 	AGGJ2025Character();
-	
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInteractibleInFocusChanged(class UGGJ2025InteractableComponent* component);
 
 protected:
 
@@ -57,8 +66,15 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void Tick(float DeltaTime) override;
+
 public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return NewCamera; }
+
+private:
+
+	UPROPERTY(Transient)
+	class UGGJ2025InteractableComponent* InteractableInFocus = nullptr;
 };
 
