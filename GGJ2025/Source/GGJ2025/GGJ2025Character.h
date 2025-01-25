@@ -44,6 +44,9 @@ class AGGJ2025Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere)
+	float test = 666.0f;
+
 public:
 	AGGJ2025Character();
 	
