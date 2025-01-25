@@ -73,3 +73,5 @@ GGJ2025/Plugins/**/Intermediate/*
 # Cache files for the editor to use
 GGJ2025/DerivedDataCache/*
 GGJ2025/enc_temp_folder/*
+/GGJ2025/Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini
+/GGJ2025/Saved/Config/WindowsEditor/Editor.ini
