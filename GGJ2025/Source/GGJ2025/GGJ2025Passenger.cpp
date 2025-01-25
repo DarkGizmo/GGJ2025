@@ -4,7 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 
-#include "GGJ2025CameraComponent.h"
+#include "GGJ2025Character.h"
 #include "GGJ2025InteractableComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,83 @@ void AGGJ2025Passenger::EndPlay(EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+void AGGJ2025Passenger::StartFollowPlayer(class AGGJ2025Character* player)
+{
+	if (player != nullptr)
+	{
+		if (PlayerToFollow != nullptr)
+		{
+			StopFollowPlayer();
+		}
+
+		PlayerToFollow = player;
+
+		if (player->FollowingPassenger != nullptr)
+		{
+			player->FollowingPassenger->StopFollowPlayer();
+		}
+
+		player->FollowingPassenger = this;
+	}
+}
+
+void AGGJ2025Passenger::StopFollowPlayer()
+{
+	if (PlayerToFollow)
+	{
+		if (PlayerToFollow->FollowingPassenger == this)
+		{
+			PlayerToFollow->FollowingPassenger = nullptr;
+		}
+
+		PlayerToFollow = nullptr;
+	}
+}
+
+void AGGJ2025Passenger::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (PlayerToFollow != nullptr)
+	{
+		FVector location = GetActorLocation();
+
+		FVector toPlayer = PlayerToFollow->GetActorLocation() - location;
+		float distSqr2D = toPlayer.SizeSquared2D();
+		if (distSqr2D > FMath::Square(FollowDistance))
+		{
+			SetActorLocation(location + (toPlayer.GetSafeNormal2D() * FollowingPlayerSpeed * DeltaTime), true);
+		}
+
+		toPlayer.Z = 0.0f;
+		FRotator desiredRotation = toPlayer.Rotation();
+		FRotator currentRotation = GetActorRotation();
+
+		if (desiredRotation.Yaw != currentRotation.Yaw)
+		{
+			SetActorRotation(FMath::RInterpTo(currentRotation, desiredRotation, DeltaTime, FollowTurnInterpSpeed));
+		}
+	}
+}
+
 void AGGJ2025Passenger::OnInteract(class AGGJ2025Character* character)
 {
 	BP_OnInteract();
+
+	if (character != nullptr)
+	{
+		if (PlayerToFollow != nullptr)
+		{
+			PlayerToFollow->FollowingPassenger = nullptr;
+		}
+
+		if (character == PlayerToFollow)
+		{
+			StopFollowPlayer();
+		}
+		else
+		{
+			StartFollowPlayer(character);
+		}
+	}
 }
