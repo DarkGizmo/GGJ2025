@@ -1,0 +1,114 @@
+{
+  "FileVersion": 2,
+  "Id": "2cc5d726-c2aa-3647-a533-1ec0b505b56b",
+  "Items": [
+    {
+      "Id": "23bc64f1-44e0-48c7-994b-4c9565254500",
+      "Command": "Development_Editor|x64",
+      "ProjectConfig": "Development_Editor",
+      "ProjectPlatform": "x64",
+      "Items": [
+        {
+          "Id": "e2e965e2-7991-42f6-b230-f0c6f4f17e8f",
+          "Command": "WindowsLocalDebugger",
+          "Items": [
+            {
+              "Id": "3eafffcf-f2ab-4064-93a8-820eb07fdb65",
+              "Command": "\"$(SolutionDir)GGJ2025.uproject\" -skipcompile"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "9e71643e-0a9f-4e8a-b782-393089f1aaec",
+      "Command": "DebugGame_Editor|x64",
+      "ProjectConfig": "DebugGame_Editor",
+      "ProjectPlatform": "x64",
+      "Items": [
+        {
+          "Id": "6a385232-d56f-4565-a872-d6a3f9c3cd10",
+          "Command": "WindowsLocalDebugger",
+          "Items": [
+            {
+              "Id": "b32ebd72-9db5-4c0b-b800-2b6601771838",
+              "Command": "\"$(SolutionDir)GGJ2025.uproject\" -skipcompile"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "968d9405-a7c4-443e-833c-0b1cbaecd449",
+      "Command": "Win64_arm64_DebugGame_Editor|x64",
+      "ProjectConfig": "Win64_arm64_DebugGame_Editor",
+      "ProjectPlatform": "x64",
+      "Items": [
+        {
+          "Id": "21449730-7b38-47b1-be79-f458275fefd3",
+          "Command": "WindowsRemoteDebugger",
+          "Items": [
+            {
+              "Id": "6268259c-1410-4857-98c4-30ce9f7be9b3",
+              "Command": "\"$(SolutionDir)GGJ2025.uproject\" -skipcompile"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "39f17b60-c768-428f-811c-6c3626de15e2",
+      "Command": "Win64_arm64_Development_Editor|x64",
+      "ProjectConfig": "Win64_arm64_Development_Editor",
+      "ProjectPlatform": "x64",
+      "Items": [
+        {
+          "Id": "c8d0b015-a1de-4bb7-a71c-57497b978628",
+          "Command": "WindowsRemoteDebugger",
+          "Items": [
+            {
+              "Id": "5a878eda-6607-4829-afe5-224d8fc4bbaf",
+              "Command": "\"$(SolutionDir)GGJ2025.uproject\" -skipcompile"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "84dd3bc7-2138-44e6-9b74-8cdbf214bd20",
+      "Command": "Win64_arm64ec_Development_Editor|x64",
+      "ProjectConfig": "Win64_arm64ec_Development_Editor",
+      "ProjectPlatform": "x64",
+      "Items": [
+        {
+          "Id": "f68c7011-fb9c-4c98-92c7-b720e0e8288b",
+          "Command": "WindowsRemoteDebugger",
+          "Items": [
+            {
+              "Id": "7ab104de-23f5-450d-97dc-a18a9cd00834",
+              "Command": "\"$(SolutionDir)GGJ2025.uproject\" -skipcompile"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "1634b7ec-16a5-45cf-be28-57e9611f5607",
+      "Command": "Win64_arm64ec_DebugGame_Editor|x64",
+      "ProjectConfig": "Win64_arm64ec_DebugGame_Editor",
+      "ProjectPlatform": "x64",
+      "Items": [
+        {
+          "Id": "26e7c83f-8f1d-4ffb-b532-dedb347b6081",
+          "Command": "WindowsRemoteDebugger",
+          "Items": [
+            {
+              "Id": "707f73d3-4673-4393-ab7c-5974e49c3168",
+              "Command": "\"$(SolutionDir)GGJ2025.uproject\" -skipcompile"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
