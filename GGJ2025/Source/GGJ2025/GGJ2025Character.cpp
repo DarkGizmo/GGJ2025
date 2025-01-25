@@ -9,8 +9,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "UObject/UObjectIterator.h"
 
 #include "GGJ2025CameraComponent.h"
+#include "GGJ2025InteractableComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -84,9 +86,61 @@ void AGGJ2025Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	}
 }
 
+void AGGJ2025Character::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	FVector playerLocation = GetActorLocation();
+	FVector playerForward = GetActorForwardVector();
+	UGGJ2025InteractableComponent* bestComponent = nullptr;
+	float bestScore = 0.0f;
+
+	float maxInteractionDistanceSqr = FMath::Square(MaxInteractionDistance);
+
+	for (TObjectIterator<UGGJ2025InteractableComponent> It; It; ++It)
+	{
+		// You can now access each actor through 'It'
+		if (UGGJ2025InteractableComponent* interactionComponent = *It)
+		{
+			if (interactionComponent->GetWorld() != GetWorld())
+			{
+				continue;
+			}
+
+			FVector toInteractible = interactionComponent->GetComponentLocation() - playerLocation;
+			float distance2DSqr = toInteractible.SizeSquared2D();
+			if (distance2DSqr > maxInteractionDistanceSqr)
+			{
+				continue;
+			}
+
+			float distance = FMath::Sqrt(distance2DSqr);
+			float distanceScore = 1.0f - distance / MaxInteractionDistance;
+			float dotScore = (toInteractible / distance) | playerForward;
+			float currentScore = (distanceScore + dotScore) * 0.5f;
+
+			if (currentScore > bestScore)
+			{
+				bestScore = currentScore;
+				bestComponent = interactionComponent;
+			}
+		}
+	}
+
+	if (bestComponent != InteractableInFocus)
+	{
+		InteractableInFocus = bestComponent;
+		OnInteractibleInFocusChanged(InteractableInFocus);
+	}
+}
+
 void AGGJ2025Character::Interact()
 {
-	UE_LOG(LogTemplateCharacter, Warning, TEXT("Interact not implemented"));
+	if (InteractableInFocus != nullptr)
+	{
+		InteractableInFocus->OnInteractionEvent.Broadcast(this);
+		InteractableInFocus->OnInteract(this);
+	}
 }
 
 void AGGJ2025Character::Move(const FInputActionValue& Value)
@@ -94,10 +148,10 @@ void AGGJ2025Character::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (NewCamera != nullptr)
 	{
 		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator Rotation = NewCamera->GetComponentRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
 		// get forward vector
