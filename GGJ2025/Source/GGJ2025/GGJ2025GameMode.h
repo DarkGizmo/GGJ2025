@@ -50,11 +50,24 @@ public:
 	class AGGJ2025Train* GetTrain();
 
 	UFUNCTION(BlueprintCallable)
-	TArray<class AGGJ2025Passenger*> GetPassengers();
+	TArray<class AGGJ2025Passenger*> GetPassengers() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool CanBellBeRung() const;
+
+	UFUNCTION(BlueprintCallable)
+	void RingBell();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBellRung();
 
 private:
 	int32 m_CurrentIndex;
+
+	UPROPERTY(Transient)
 	class AGGJ2025Train* m_Train;
+
+	UPROPERTY(Transient)
 	class APlayerSpawningStation* m_SpawningStation;
 };
 

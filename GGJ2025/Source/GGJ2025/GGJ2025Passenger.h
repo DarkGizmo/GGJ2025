@@ -58,6 +58,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetHeldItem(class AGGJ2025Item* newItem);
 
+	UFUNCTION(BlueprintCallable)
+	class UTrainSeatComponent* GetSeat() const { return Seat; }
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetSeat(class UTrainSeatComponent* seat);
 

@@ -7,6 +7,8 @@
 #include "TrainSeatComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
+#include "GGJ2025Passenger.h"
+
 AGGJ2025GameMode::AGGJ2025GameMode()
 {
 	// set default pawn class to our Blueprinted character
@@ -24,7 +26,7 @@ AGGJ2025Train* AGGJ2025GameMode::GetTrain()
 	return m_Train;
 }
 
-TArray<class AGGJ2025Passenger*> AGGJ2025GameMode::GetPassengers()
+TArray<class AGGJ2025Passenger*> AGGJ2025GameMode::GetPassengers() const
 {
 	if (m_SpawningStation)
 	{
@@ -34,9 +36,31 @@ TArray<class AGGJ2025Passenger*> AGGJ2025GameMode::GetPassengers()
 	return TArray<class AGGJ2025Passenger*>();
 }
 
+bool AGGJ2025GameMode::CanBellBeRung() const
+{
+	for (AGGJ2025Passenger* passenger : GetPassengers())
+	{
+		if (passenger != nullptr && passenger->GetSeat() == nullptr)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void AGGJ2025GameMode::RingBell()
+{
+	if (CanBellBeRung())
+	{
+		OnBellRung();
+	}
+}
+
 void AGGJ2025GameMode::SpawnLevel(int32 levelIndex, APlayerSpawningStation* spawningStation, FTransform trainSpawnTransform)
 {
 	m_CurrentIndex = levelIndex;
+	m_SpawningStation = spawningStation;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = nullptr;          // Specify the owner, if any
