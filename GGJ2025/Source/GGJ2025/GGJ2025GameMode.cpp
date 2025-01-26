@@ -2,6 +2,9 @@
 
 #include "GGJ2025GameMode.h"
 #include "GGJ2025Character.h"
+#include "GGJ2025Passenger.h"
+#include "GGJ2025Traits.h"
+#include "TrainSeatComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
 #include "GGJ2025Passenger.h"
@@ -77,4 +80,90 @@ void AGGJ2025GameMode::SpawnLevel(int32 levelIndex, APlayerSpawningStation* spaw
 			break;
 		}
 	}
+}
+
+float AGGJ2025GameMode::EvaluateLevel()
+{
+	float result = 0.f;
+
+	auto spawnedPassengers = m_SpawningStation->GetSpawnedPassengers();
+	for (auto passenger : spawnedPassengers)
+	{
+		auto seat = passenger->GetSeat();
+		auto trait = passenger->Traits;
+
+		int32 nbGoals = trait.WantsTraits.Num() + trait.DoesNotWantTraits.Num() + trait.PlaceableNeeds.Num();
+		int32 nbCompletedGoals = 0;
+		// Iterate over want traits
+		for (auto wantTrait : trait.WantsTraits)
+		{
+			bool hasFoundTrait = false;
+			for (auto ItNeighbor = seat->NeighborSeats.CreateIterator(); ItNeighbor && !hasFoundTrait; ++ItNeighbor)
+			{
+				auto neighbor = *ItNeighbor;
+				auto seatedNeighbor = neighbor->SeatedPassenger;
+				if (seatedNeighbor)
+				{
+					auto neighborTrait = seatedNeighbor->Traits;
+					for (auto ItHasTrait = neighborTrait.HasTraits.CreateIterator(); ItHasTrait && !hasFoundTrait; ++ItHasTrait)
+					{
+						if (wantTrait == *ItHasTrait)
+						{
+							++nbCompletedGoals;
+							hasFoundTrait = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// Iterate over does not want traits
+		for (auto doesNotWantTrait : trait.DoesNotWantTraits)
+		{
+			bool hasFoundTrait = false;
+			for (auto ItNeighbor = seat->NeighborSeats.CreateIterator(); ItNeighbor && !hasFoundTrait; ++ItNeighbor)
+			{
+				auto neighbor = *ItNeighbor;
+				auto seatedNeighbor = neighbor->SeatedPassenger;
+				if (seatedNeighbor)
+				{
+					auto neighborTrait = seatedNeighbor->Traits;
+					for (auto ItHasTrait = neighborTrait.HasTraits.CreateIterator(); ItHasTrait && !hasFoundTrait; ++ItHasTrait)
+					{
+						if (doesNotWantTrait == *ItHasTrait)
+						{
+							hasFoundTrait = true;
+							break;
+						}
+					}
+				}
+			}
+
+			if (!hasFoundTrait)
+			{
+				++nbCompletedGoals;
+			}
+		}
+
+		// Iterate over placeable needs
+		for (auto placeableNeeds : trait.PlaceableNeeds)
+		{
+			for (auto linkedPlaceable : seat->LinkedPlaceableTypes)
+			{
+				if (placeableNeeds == linkedPlaceable)
+				{
+					++nbCompletedGoals;
+					break;
+				}
+			}
+		}
+
+		// Calculate goals average for passenger
+		result += static_cast<float>(nbCompletedGoals) / nbGoals;
+	}
+
+	int32 nbPassengers = spawnedPassengers.Num();
+
+	return result / static_cast<float>(nbPassengers);
 }
