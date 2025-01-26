@@ -53,6 +53,10 @@ class AGGJ2025Character : public ACharacter
 	UPROPERTY(EditDefaultsOnly)
 	float InteractionDotLimit = 0.707f;
 
+	// When the interaction component is the following actor, this is by how much we multiply the score
+	UPROPERTY(EditDefaultsOnly)
+	float InteractionFollowingActorScoreAdjustmentRatio = 0.5f;
+
 public:
 	AGGJ2025Character();
 
@@ -61,6 +65,21 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTalkingPassengerChanged(class AGGJ2025Passenger* passenger);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHeldItemChanged(class AGGJ2025Item* newItem);
+
+	UFUNCTION(BlueprintCallable)
+	void GiveItem(TSubclassOf<class AGGJ2025Item> itemClass);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveHeldItem(bool bDestroy);
+
+	UFUNCTION(BlueprintCallable)
+	void SetHeldItem(class AGGJ2025Item* newItem);
+
+	UFUNCTION(BlueprintCallable)
+	bool CanConfirmWhileTalking() const;
 
 protected:
 
@@ -93,6 +112,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
 	class AGGJ2025Passenger* TalkingPassenger;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
+	class AGGJ2025Item* HeldItem;
 
 	void SetTalkingPassenger(class AGGJ2025Passenger* talkingPassenger);
 
