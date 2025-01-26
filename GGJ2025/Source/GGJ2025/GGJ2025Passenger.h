@@ -70,9 +70,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnHeldItemChanged(class AGGJ2025Item* newItem);
 
-	UFUNCTION(BlueprintCallable)
-	UTrainSeatComponent* GetSeat();
-
 protected:
 
 	UFUNCTION()
