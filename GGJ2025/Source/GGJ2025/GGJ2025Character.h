@@ -85,6 +85,9 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UGGJ2025CameraComponent* GetFollowCamera() const { return NewCamera; }
 
+	UFUNCTION(BlueprintCallable)
+	class UGGJ2025InteractableComponent* GetInteractableInFocus() const { return InteractableInFocus;	}
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
 	class AGGJ2025Passenger* FollowingPassenger;
 
