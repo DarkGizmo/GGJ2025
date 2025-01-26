@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
+#include "GGJ2025Traits.h"
+
 #include "GGJ2025Passenger.generated.h"
 
 UCLASS(config=Game)
@@ -26,6 +28,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float FollowDistance = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	struct FGGJ2025AssociatedTrait Traits;
 
 	AGGJ2025Passenger();
 	virtual void BeginPlay() override;
@@ -88,6 +93,5 @@ private:
 
 	UPROPERTY(Transient)
 	class UTrainSeatComponent* Seat;
-
 };
 
