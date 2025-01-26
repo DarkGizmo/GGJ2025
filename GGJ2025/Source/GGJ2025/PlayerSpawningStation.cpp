@@ -92,4 +92,5 @@ void APlayerSpawningStation::SpawnPassengerInternal(TSubclassOf<class AGGJ2025Pa
             , spawnTransform.GetLocation(), spawnTransform.GetRotation().Rotator(), SpawnParams);
 
     SpawnedPassengers.Add(newPassenger);
+    OnPassengerSpawned(newPassenger);
 }
