@@ -32,6 +32,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool HasFocusTarget() const { return bCurrentTargetActivated; }
 
+	UFUNCTION(BlueprintCallable)
+	USceneComponent* GetFocusTarget() const { return CurrentTargetAttachParent; }
+
 	// duration: duration of the target change, -1 means no time limit
 	UFUNCTION(BlueprintCallable)
 	void ChangeFocusTarget(USceneComponent* newTarget, FTransform transform, bool bKeepRelativeTransform, float duration);
