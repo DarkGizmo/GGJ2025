@@ -165,11 +165,6 @@ void AGGJ2025Passenger::RemoveHeldItem(bool bDestroy)
 	SetHeldItem(nullptr);
 }
 
-UTrainSeatComponent* AGGJ2025Passenger::GetSeat()
-{
-	return Seat;
-}
-
 void AGGJ2025Passenger::OnInteract(class AGGJ2025Character* character)
 {
 	BP_OnInteract();
