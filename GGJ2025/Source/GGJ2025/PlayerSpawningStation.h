@@ -42,7 +42,7 @@ public:
 private:
 	void SpawnPassengerInternal(TSubclassOf<class AGGJ2025Passenger> passenger);
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TArray<class AGGJ2025Passenger*> SpawnedPassengers;
 };
 
