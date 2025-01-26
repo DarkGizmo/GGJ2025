@@ -14,6 +14,7 @@
 #include "GGJ2025CameraComponent.h"
 #include "GGJ2025InteractableComponent.h"
 #include "GGJ2025Passenger.h"
+#include "GGJ2025Item.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -108,6 +109,11 @@ void AGGJ2025Character::Tick(float DeltaTime)
 				continue;
 			}
 
+			if (!interactionComponent->IsInteractible(this))
+			{
+				continue;
+			}
+
 			FVector toInteractible = interactionComponent->GetComponentLocation() - playerLocation;
 			float distance2DSqr = toInteractible.SizeSquared2D();
 			if (distance2DSqr > maxInteractionDistanceSqr)
@@ -127,6 +133,11 @@ void AGGJ2025Character::Tick(float DeltaTime)
 
 			float currentScore = (distanceScore + dotScore) * 0.5f;
 
+			if (interactionComponent->GetOwner() == FollowingPassenger)
+			{
+				currentScore *= InteractionFollowingActorScoreAdjustmentRatio;
+			}
+
 			if (currentScore > bestScore)
 			{
 				bestScore = currentScore;
@@ -137,7 +148,18 @@ void AGGJ2025Character::Tick(float DeltaTime)
 
 	if (bestComponent != InteractableInFocus)
 	{
+		if (InteractableInFocus != nullptr)
+		{
+			InteractableInFocus->BP_InFocusChanged(false);
+		}
+
 		InteractableInFocus = bestComponent;
+
+		if (InteractableInFocus != nullptr)
+		{
+			InteractableInFocus->BP_InFocusChanged(true);
+		}
+
 		OnInteractibleInFocusChanged(InteractableInFocus);
 	}
 
@@ -153,11 +175,80 @@ void AGGJ2025Character::Tick(float DeltaTime)
 	}
 }
 
+void AGGJ2025Character::GiveItem(TSubclassOf<class AGGJ2025Item> itemClass)
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = nullptr;          // Specify the owner, if any
+	SpawnParams.Instigator = nullptr;     // Specify the instigator, if needed
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	// Spawn the actor
+	AGGJ2025Item* newItem =
+		GetWorld()->SpawnActor<AGGJ2025Item>(itemClass
+			, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+	SetHeldItem(newItem);
+}
+
+void AGGJ2025Character::RemoveHeldItem(bool bDestroy)
+{
+	if (bDestroy && HeldItem != nullptr)
+	{
+		HeldItem->Destroy();
+	}
+
+	SetHeldItem(nullptr);
+}
+
+void AGGJ2025Character::SetHeldItem(AGGJ2025Item* newItem)
+{
+	if (HeldItem != newItem)
+	{
+		HeldItem = newItem;
+
+		if (HeldItem != nullptr)
+		{
+			USceneComponent* pickupCompoment = FindComponentByTag<USceneComponent>(TEXT("Pickup"));
+			HeldItem->AttachToComponent(pickupCompoment, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		}
+
+		OnHeldItemChanged(HeldItem);
+		OnInteractibleInFocusChanged(InteractableInFocus);
+	}
+}
+
+bool AGGJ2025Character::CanConfirmWhileTalking() const
+{
+	if (FollowingPassenger != nullptr)
+	{
+		return false;
+	}
+
+	if (TalkingPassenger->HeldItem != nullptr && HeldItem != nullptr && HeldItem->ItemName == TalkingPassenger->HeldItem->ItemName)
+	{
+		// Already holding this very  item
+		return false;
+	}
+
+	return true;
+}
+
 void AGGJ2025Character::Interact()
 {
 	if (TalkingPassenger)
 	{
-		if (FollowingPassenger == nullptr)
+		if (HeldItem)
+		{
+			if (CanConfirmWhileTalking())
+			{
+				AGGJ2025Item* item = HeldItem;
+				RemoveHeldItem(false);
+				TalkingPassenger->RemoveHeldItem(true);
+				TalkingPassenger->SetHeldItem(item);
+				SetTalkingPassenger(nullptr);
+			}
+		}
+		else if (FollowingPassenger == nullptr)
 		{
 			TalkingPassenger->StartFollowPlayer(this);
 			SetTalkingPassenger(nullptr);
