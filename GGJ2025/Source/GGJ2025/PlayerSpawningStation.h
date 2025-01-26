@@ -36,6 +36,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<class AGGJ2025Passenger*> GetSpawnedPassengers();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPassengerSpawned(class AGGJ2025Passenger*);
+
 private:
 	void SpawnPassengerInternal(TSubclassOf<class AGGJ2025Passenger> passenger);
 
