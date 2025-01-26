@@ -15,11 +15,18 @@ class UGGJ2025InteractableComponent : public USceneComponent
 
 public:
 	// Event exposed to Blueprints
+	UPROPERTY(EditAnywhere, Category = "Events")
+	FText InteractionText;
+
+	// Event exposed to Blueprints
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnInteractionEvent OnInteractionEvent;
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnInteract(class AGGJ2025Character* character);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FText GetInteractText(class AGGJ2025Character* character) const;
 };
 
 

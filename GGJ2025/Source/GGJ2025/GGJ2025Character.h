@@ -31,9 +31,11 @@ class AGGJ2025Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
 
-	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* CancelAction;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -61,6 +63,9 @@ protected:
 
 	UFUNCTION(Category = Character)
 	virtual void Interact();
+
+	UFUNCTION(Category = Character)
+	virtual void Cancel();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

@@ -74,8 +74,8 @@ void AGGJ2025Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
-		// Jumping
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AGGJ2025Character::Interact);
+		EnhancedInputComponent->BindAction(CancelAction, ETriggerEvent::Triggered, this, &AGGJ2025Character::Cancel);
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AGGJ2025Character::Move);
@@ -160,6 +160,11 @@ void AGGJ2025Character::Interact()
 		InteractableInFocus->OnInteractionEvent.Broadcast(this);
 		InteractableInFocus->OnInteract(this);
 	}
+}
+
+void AGGJ2025Character::Cancel()
+{
+	// TODO
 }
 
 void AGGJ2025Character::Move(const FInputActionValue& Value)
