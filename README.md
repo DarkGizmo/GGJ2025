@@ -17,7 +17,7 @@ Intuitive visuals: Clear pictograms and accessible gameplay for everyone.
 
 ##### Crédits #####
 
-#### A game developed during the Global Game Jam 2025 ####
+##### A game developed during the Global Game Jam 2025 #####
 
 Programmation: Carl-André Corbeil, Francois Vaillancourt, Gabriel Loumbi et Josseph Passineau
 Level Design: Dominick Basque Morin et Joseph Passineau
