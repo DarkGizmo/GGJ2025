@@ -15,6 +15,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText GiveInteractionText;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText DiscardInteractionText;
+
 	AGGJ2025Item();
 };
 
