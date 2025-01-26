@@ -16,7 +16,7 @@ Unique passengers: From VIPs to magazine-loving grannies and crying babies, ever
 Engaging progression: New mechanics and surprises with every level.
 Intuitive visuals: Clear pictograms and accessible gameplay for everyone.
 
-## Crédits ##
+##### Crédits #####
 Programmation: Carl-André Corbeil, Francois Vaillancourt, Gabriel Loumbi et Josseph Passineau
 Level Design: Dominick Basque Morin et Joseph Passineau
 Writting: Dominick Basque-Morin
