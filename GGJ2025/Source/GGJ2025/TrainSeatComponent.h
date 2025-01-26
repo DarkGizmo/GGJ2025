@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GGJ2025InteractableComponent.h"
+#include "GGJ2025Placeable.h"
 #include "TrainSeatComponent.generated.h"
 
 UCLASS(minimalapi, Blueprintable, BlueprintType, meta = (BlueprintSpawnableComponent))
@@ -18,6 +19,15 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Transient)
 	class AGGJ2025Passenger* SeatedPassenger;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Seat", meta = (AllowPrivateAccess = "true"))
+	EPlaceableType PlaceableType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Seat", meta = (AllowPrivateAccess = "true"))
+	TArray<EPlaceableType> LinkedPlaceableTypes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Seat", meta = (AllowPrivateAccess = "true"))
+	TArray<class UTrainSeatComponent*> NeighborSeats;
 };
 
 

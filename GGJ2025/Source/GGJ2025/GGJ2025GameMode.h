@@ -40,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnLevel(int32 levelIndex, APlayerSpawningStation* spawningStation, FTransform trainSpawnTransform);
 
+	UFUNCTION(BlueprintCallable)
+	float EvaluateLevel();
+
 public:
 	AGGJ2025GameMode();
 
