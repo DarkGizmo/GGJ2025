@@ -25,7 +25,7 @@ Alexandre Adam-Goyette, Youssef Jazmati
 #### Animator: ####
 Eduardo Miranda Mapelli
 
-#### Character Modelers:####
+#### Character Modelers: ####
 Maggie Li, Vincent Galipeau
 
 #### Game Designers: ####
