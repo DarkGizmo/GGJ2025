@@ -25,12 +25,20 @@ public:
 	class AGGJ2025Passenger* SpawnPassenger();
 
 	UFUNCTION(BlueprintCallable)
+	void SpawnPassengers(TArray<TSubclassOf<class AGGJ2025Passenger>> passengers);
+
+	UFUNCTION(BlueprintCallable)
 	void SendPassengersToWaitingDestinations();
 
 	UFUNCTION(BlueprintCallable)
 	void ClearPassengers();
 
+	UFUNCTION(BlueprintCallable)
+	TArray<class AGGJ2025Passenger*> GetSpawnedPassengers();
+
 private:
+	void SpawnPassengerInternal(TSubclassOf<class AGGJ2025Passenger> passenger);
+
 	UPROPERTY(Transient)
 	TArray<class AGGJ2025Passenger*> SpawnedPassengers;
 };
