@@ -1,4 +1,4 @@
-## Train of Thoughts ##
+# Train of Thoughts #
 
 Welcome aboard Train of Thoughts! You will step into the shoes of the Thoughtful Ticketmaster tasked with ensuring 
 harmonious journeys for a colorful cast of passengers. Using your psychic abilities, you'll read their thoughts, 
@@ -15,12 +15,36 @@ Unique passengers: From VIPs to magazine-loving grannies and crying babies, ever
 Engaging progression: New mechanics and surprises with every level.
 Intuitive visuals: Clear pictograms and accessible gameplay for everyone.
 
-##### Crédits #####
+###### This game has been developed in 48 hours during the Global Game Jam 2025 ######
 
-##### A game developed during the Global Game Jam 2025 #####
 
-Programmation: Carl-André Corbeil, Francois Vaillancourt, Gabriel Loumbi et Josseph Passineau
-Level Design: Dominick Basque Morin et Joseph Passineau
-Writting: Dominick Basque-Morin
-Character modelers: 
-3D environnement artists: Youssef Jazmati
+## Crédits ##
+
+#### 3D Environment Artists: #### 
+Alexandre Adam-Goyette, Youssef Jazmati
+
+#### Animator: ####
+Eduardo Miranda Mapelli
+
+#### Character Modelers: ####
+Maggie Li, Vincent Galipeau
+
+#### Game Designers: ####
+Dominick Basque-Morin, Joseph Passineau
+
+#### Music by ####
+Gabriel Lumbi
+
+#### Programmers: ####
+Carl-André Corbeil, François Vaillancourt, Gabriel Loumbi, Joseph Passineau
+
+#### Writer: ####
+Dominick Basque-Morin
+
+
+
+
+
+
+
+
