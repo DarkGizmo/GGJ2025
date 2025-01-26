@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GGJ2025Character.h"
 #include "Engine/LocalPlayer.h"
@@ -10,9 +9,11 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "UObject/UObjectIterator.h"
+#include "EngineUtils.h" // Include for TActorIterator
 
 #include "GGJ2025CameraComponent.h"
 #include "GGJ2025InteractableComponent.h"
+#include "GGJ2025Passenger.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -117,6 +118,13 @@ void AGGJ2025Character::Tick(float DeltaTime)
 			float distance = FMath::Sqrt(distance2DSqr);
 			float distanceScore = 1.0f - distance / MaxInteractionDistance;
 			float dotScore = (toInteractible / distance) | playerForward;
+
+			if (dotScore < InteractionDotLimit && distance > InteractionDotCloseThreshold)
+			{
+				// Not facing interaction and not on interaction
+				continue;
+			}
+
 			float currentScore = (distanceScore + dotScore) * 0.5f;
 
 			if (currentScore > bestScore)
@@ -131,6 +139,17 @@ void AGGJ2025Character::Tick(float DeltaTime)
 	{
 		InteractableInFocus = bestComponent;
 		OnInteractibleInFocusChanged(InteractableInFocus);
+	}
+
+	for (TActorIterator<AGGJ2025Passenger> PassengerItr(GetWorld()); PassengerItr; ++PassengerItr)
+	{
+		if (AGGJ2025Passenger* passenger = *PassengerItr)
+		{
+			FVector toPassenger = passenger->GetActorLocation() - playerLocation;
+
+			bool bInThoughtsReadingRange = InteractableInFocus == passenger->GetInteractionComponent();
+			passenger->ShowThoughts(bInThoughtsReadingRange);
+		}
 	}
 }
 

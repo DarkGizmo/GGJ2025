@@ -36,6 +36,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopFollowPlayer();
 
+	void ShowThoughts(bool bVisible);
+
+	UFUNCTION(BlueprintNativeEvent)
+	FText GetSpeechText() const;
+
+	UFUNCTION(BlueprintCallable)
+	class UGGJ2025InteractableComponent* GetInteractionComponent() const { return InteractionComponent; }
+
 protected:
 
 	UFUNCTION()
@@ -44,9 +52,17 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void BP_OnInteract();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_OnShowThoughtsStateChanged();
+
 	virtual void Tick(float DeltaTime) override;
 
 private:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bShowThoughts = false;
+
 	class AGGJ2025Character* PlayerToFollow;
+
 };
 

@@ -45,6 +45,11 @@ class AGGJ2025Character : public ACharacter
 	UPROPERTY(EditDefaultsOnly)
 	float MaxInteractionDot = 0.5f;
 
+	UPROPERTY(EditDefaultsOnly)
+	float InteractionDotCloseThreshold = 30.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float InteractionDotLimit = 0.707f;
 
 public:
 	AGGJ2025Character();

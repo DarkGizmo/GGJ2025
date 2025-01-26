@@ -72,6 +72,20 @@ void AGGJ2025Passenger::StopFollowPlayer()
 	}
 }
 
+void AGGJ2025Passenger::ShowThoughts(bool bVisible)
+{
+	if (bShowThoughts != bVisible)
+	{
+		bShowThoughts = bVisible;
+		BP_OnShowThoughtsStateChanged();
+	}
+}
+
+FText AGGJ2025Passenger::GetSpeechText_Implementation() const
+{
+	return FText::FromString(TEXT("Not Implemented yet!"));
+}
+
 void AGGJ2025Passenger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -104,6 +118,8 @@ void AGGJ2025Passenger::OnInteract(class AGGJ2025Character* character)
 
 	if (character != nullptr)
 	{
+		// Camera focus
+		/*
 		if (character->GetFollowCamera() != nullptr)
 		{
 			if (character->GetFollowCamera()->HasFocusTarget())
@@ -115,7 +131,8 @@ void AGGJ2025Passenger::OnInteract(class AGGJ2025Character* character)
 				character->GetFollowCamera()->ChangeFocusTarget(GetRootComponent(), FTransform::Identity, true, -1.0f);
 			}
 		}
-		/*
+		*/
+		
 		if (PlayerToFollow != nullptr)
 		{
 			PlayerToFollow->FollowingPassenger = nullptr;
@@ -129,6 +146,5 @@ void AGGJ2025Passenger::OnInteract(class AGGJ2025Character* character)
 		{
 			StartFollowPlayer(character);
 		}
-		*/
 	}
 }
