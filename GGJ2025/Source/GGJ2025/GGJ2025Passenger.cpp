@@ -6,6 +6,8 @@
 
 #include "GGJ2025Character.h"
 #include "GGJ2025InteractableComponent.h"
+#include "GGJ2025Item.h"
+#include "TrainSeatComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AGGJ2025Passenger
@@ -56,6 +58,11 @@ void AGGJ2025Passenger::StartFollowPlayer(class AGGJ2025Character* player)
 		}
 
 		player->FollowingPassenger = this;
+
+		if (player->FollowingPassenger != nullptr && player->FollowingPassenger->Seat != nullptr)
+		{
+			player->FollowingPassenger->SetSeat(nullptr);
+		}
 	}
 }
 
@@ -72,6 +79,20 @@ void AGGJ2025Passenger::StopFollowPlayer()
 	}
 }
 
+void AGGJ2025Passenger::ShowThoughts(bool bVisible)
+{
+	if (bShowThoughts != bVisible)
+	{
+		bShowThoughts = bVisible;
+		BP_OnShowThoughtsStateChanged();
+	}
+}
+
+FText AGGJ2025Passenger::GetSpeechText_Implementation() const
+{
+	return FText::FromString(TEXT("Not Implemented yet!"));
+}
+
 void AGGJ2025Passenger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -84,7 +105,8 @@ void AGGJ2025Passenger::Tick(float DeltaTime)
 		float distSqr2D = toPlayer.SizeSquared2D();
 		if (distSqr2D > FMath::Square(FollowDistance))
 		{
-			SetActorLocation(location + (toPlayer.GetSafeNormal2D() * FollowingPlayerSpeed * DeltaTime), true);
+			FHitResult hitResult;
+			SetActorLocation(location + (toPlayer.GetSafeNormal2D() * FollowingPlayerSpeed * DeltaTime), true, &hitResult);
 		}
 
 		toPlayer.Z = 0.0f;
@@ -98,24 +120,57 @@ void AGGJ2025Passenger::Tick(float DeltaTime)
 	}
 }
 
+void AGGJ2025Passenger::SetHeldItem(class AGGJ2025Item* newItem)
+{
+	if (HeldItem != newItem)
+	{
+		HeldItem = newItem;
+
+		if (HeldItem != nullptr)
+		{
+			USceneComponent* pickupCompoment = FindComponentByTag<USceneComponent>(TEXT("Pickup"));
+			HeldItem->AttachToComponent(pickupCompoment, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		}
+
+		OnHeldItemChanged(HeldItem);
+	}
+}
+
+void AGGJ2025Passenger::SetSeat_Implementation(UTrainSeatComponent* seat)
+{
+	if (Seat != seat)
+	{
+		if (Seat != nullptr)
+		{
+			Seat->SeatedPassenger = nullptr;
+		}
+
+		Seat = seat;
+
+		if (Seat != nullptr)
+		{
+			Seat->SeatedPassenger = this;
+			StopFollowPlayer();
+		}
+	}
+}
+
+void AGGJ2025Passenger::RemoveHeldItem(bool bDestroy)
+{
+	if (bDestroy && HeldItem != nullptr)
+	{
+		HeldItem->Destroy();
+	}
+
+	SetHeldItem(nullptr);
+}
+
 void AGGJ2025Passenger::OnInteract(class AGGJ2025Character* character)
 {
 	BP_OnInteract();
 
 	if (character != nullptr)
 	{
-		if (PlayerToFollow != nullptr)
-		{
-			PlayerToFollow->FollowingPassenger = nullptr;
-		}
-
-		if (character == PlayerToFollow)
-		{
-			StopFollowPlayer();
-		}
-		else
-		{
-			StartFollowPlayer(character);
-		}
+		character->SetTalkingPassenger(this);
 	}
 }

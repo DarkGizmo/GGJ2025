@@ -36,6 +36,32 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopFollowPlayer();
 
+	void ShowThoughts(bool bVisible);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FText GetSpeechText() const;
+
+	UFUNCTION(BlueprintCallable)
+	class UGGJ2025InteractableComponent* GetInteractionComponent() const { return InteractionComponent; }
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void GoToDestination(const FVector& location, const FRotator& rotation);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
+	class AGGJ2025Item* HeldItem;
+
+	UFUNCTION(BlueprintCallable)
+	void SetHeldItem(class AGGJ2025Item* newItem);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetSeat(class UTrainSeatComponent* seat);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveHeldItem(bool bDestroy);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHeldItemChanged(class AGGJ2025Item* newItem);
+
 protected:
 
 	UFUNCTION()
@@ -44,9 +70,21 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void BP_OnInteract();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_OnShowThoughtsStateChanged();
+
 	virtual void Tick(float DeltaTime) override;
 
 private:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bShowThoughts = false;
+
+	UPROPERTY(Transient)
 	class AGGJ2025Character* PlayerToFollow;
+
+	UPROPERTY(Transient)
+	class UTrainSeatComponent* Seat;
+
 };
 

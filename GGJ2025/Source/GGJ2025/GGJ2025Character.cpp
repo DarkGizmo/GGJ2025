@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GGJ2025Character.h"
 #include "Engine/LocalPlayer.h"
@@ -10,9 +9,12 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "UObject/UObjectIterator.h"
+#include "EngineUtils.h" // Include for TActorIterator
 
 #include "GGJ2025CameraComponent.h"
 #include "GGJ2025InteractableComponent.h"
+#include "GGJ2025Passenger.h"
+#include "GGJ2025Item.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -73,8 +75,8 @@ void AGGJ2025Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
-		// Jumping
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AGGJ2025Character::Interact);
+		EnhancedInputComponent->BindAction(CancelAction, ETriggerEvent::Triggered, this, &AGGJ2025Character::Cancel);
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AGGJ2025Character::Move);
@@ -107,6 +109,11 @@ void AGGJ2025Character::Tick(float DeltaTime)
 				continue;
 			}
 
+			if (!interactionComponent->IsInteractible(this))
+			{
+				continue;
+			}
+
 			FVector toInteractible = interactionComponent->GetComponentLocation() - playerLocation;
 			float distance2DSqr = toInteractible.SizeSquared2D();
 			if (distance2DSqr > maxInteractionDistanceSqr)
@@ -117,7 +124,19 @@ void AGGJ2025Character::Tick(float DeltaTime)
 			float distance = FMath::Sqrt(distance2DSqr);
 			float distanceScore = 1.0f - distance / MaxInteractionDistance;
 			float dotScore = (toInteractible / distance) | playerForward;
+
+			if (dotScore < InteractionDotLimit && distance > InteractionDotCloseThreshold)
+			{
+				// Not facing interaction and not on interaction
+				continue;
+			}
+
 			float currentScore = (distanceScore + dotScore) * 0.5f;
+
+			if (interactionComponent->GetOwner() == FollowingPassenger)
+			{
+				currentScore *= InteractionFollowingActorScoreAdjustmentRatio;
+			}
 
 			if (currentScore > bestScore)
 			{
@@ -129,17 +148,124 @@ void AGGJ2025Character::Tick(float DeltaTime)
 
 	if (bestComponent != InteractableInFocus)
 	{
+		if (InteractableInFocus != nullptr)
+		{
+			InteractableInFocus->BP_InFocusChanged(false);
+		}
+
 		InteractableInFocus = bestComponent;
+
+		if (InteractableInFocus != nullptr)
+		{
+			InteractableInFocus->BP_InFocusChanged(true);
+		}
+
+		OnInteractibleInFocusChanged(InteractableInFocus);
+	}
+
+	for (TActorIterator<AGGJ2025Passenger> PassengerItr(GetWorld()); PassengerItr; ++PassengerItr)
+	{
+		if (AGGJ2025Passenger* passenger = *PassengerItr)
+		{
+			FVector toPassenger = passenger->GetActorLocation() - playerLocation;
+
+			bool bInThoughtsReadingRange = InteractableInFocus == passenger->GetInteractionComponent();
+			passenger->ShowThoughts(bInThoughtsReadingRange);
+		}
+	}
+}
+
+void AGGJ2025Character::GiveItem(TSubclassOf<class AGGJ2025Item> itemClass)
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = nullptr;          // Specify the owner, if any
+	SpawnParams.Instigator = nullptr;     // Specify the instigator, if needed
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	// Spawn the actor
+	AGGJ2025Item* newItem =
+		GetWorld()->SpawnActor<AGGJ2025Item>(itemClass
+			, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+	SetHeldItem(newItem);
+}
+
+void AGGJ2025Character::RemoveHeldItem(bool bDestroy)
+{
+	if (bDestroy && HeldItem != nullptr)
+	{
+		HeldItem->Destroy();
+	}
+
+	SetHeldItem(nullptr);
+}
+
+void AGGJ2025Character::SetHeldItem(AGGJ2025Item* newItem)
+{
+	if (HeldItem != newItem)
+	{
+		HeldItem = newItem;
+
+		if (HeldItem != nullptr)
+		{
+			USceneComponent* pickupCompoment = FindComponentByTag<USceneComponent>(TEXT("Pickup"));
+			HeldItem->AttachToComponent(pickupCompoment, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		}
+
+		OnHeldItemChanged(HeldItem);
 		OnInteractibleInFocusChanged(InteractableInFocus);
 	}
 }
 
+bool AGGJ2025Character::CanConfirmWhileTalking() const
+{
+	if (FollowingPassenger != nullptr)
+	{
+		return false;
+	}
+
+	if (TalkingPassenger->HeldItem != nullptr && HeldItem != nullptr && HeldItem->ItemName == TalkingPassenger->HeldItem->ItemName)
+	{
+		// Already holding this very  item
+		return false;
+	}
+
+	return true;
+}
+
 void AGGJ2025Character::Interact()
 {
-	if (InteractableInFocus != nullptr)
+	if (TalkingPassenger)
+	{
+		if (HeldItem)
+		{
+			if (CanConfirmWhileTalking())
+			{
+				AGGJ2025Item* item = HeldItem;
+				RemoveHeldItem(false);
+				TalkingPassenger->RemoveHeldItem(true);
+				TalkingPassenger->SetHeldItem(item);
+				SetTalkingPassenger(nullptr);
+			}
+		}
+		else if (FollowingPassenger == nullptr)
+		{
+			TalkingPassenger->StartFollowPlayer(this);
+			SetTalkingPassenger(nullptr);
+		}
+	}
+	else if (InteractableInFocus != nullptr)
 	{
 		InteractableInFocus->OnInteractionEvent.Broadcast(this);
 		InteractableInFocus->OnInteract(this);
+	}
+}
+
+void AGGJ2025Character::Cancel()
+{
+	if (TalkingPassenger)
+	{
+		SetTalkingPassenger(nullptr);
 	}
 }
 
@@ -148,7 +274,7 @@ void AGGJ2025Character::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (NewCamera != nullptr)
+	if (NewCamera != nullptr && TalkingPassenger == nullptr)
 	{
 		// find out which way is forward
 		const FRotator Rotation = NewCamera->GetComponentRotation();
@@ -165,3 +291,32 @@ void AGGJ2025Character::Move(const FInputActionValue& Value)
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
+
+void AGGJ2025Character::SetTalkingPassenger(class AGGJ2025Passenger* talkingPassenger)
+{
+	AGGJ2025Passenger* oldTalkingPassenger = TalkingPassenger;
+	if (talkingPassenger != TalkingPassenger)
+	{
+		TalkingPassenger = talkingPassenger;
+
+		// Camera focus
+		if (TalkingPassenger != nullptr)
+		{
+			USceneComponent* target = TalkingPassenger->FindComponentByTag<USceneComponent>(TEXT("Camera"));
+
+			if (target == nullptr)
+			{
+				target = TalkingPassenger->GetRootComponent();
+			}
+
+			GetFollowCamera()->ChangeFocusTarget(target, FTransform::Identity, true, -1.0f);
+		}
+		else if(GetFollowCamera()->HasFocusTarget() && GetFollowCamera()->GetFocusTarget() != nullptr && GetFollowCamera()->GetFocusTarget()->GetOwner() == oldTalkingPassenger)
+		{
+			GetFollowCamera()->ReturnFocus();
+		}
+
+		OnTalkingPassengerChanged(TalkingPassenger);
+	}
+}
+

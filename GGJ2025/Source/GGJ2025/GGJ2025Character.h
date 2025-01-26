@@ -31,9 +31,11 @@ class AGGJ2025Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
 
-	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* CancelAction;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -45,6 +47,15 @@ class AGGJ2025Character : public ACharacter
 	UPROPERTY(EditDefaultsOnly)
 	float MaxInteractionDot = 0.5f;
 
+	UPROPERTY(EditDefaultsOnly)
+	float InteractionDotCloseThreshold = 30.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float InteractionDotLimit = 0.707f;
+
+	// When the interaction component is the following actor, this is by how much we multiply the score
+	UPROPERTY(EditDefaultsOnly)
+	float InteractionFollowingActorScoreAdjustmentRatio = 0.5f;
 
 public:
 	AGGJ2025Character();
@@ -52,10 +63,31 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnInteractibleInFocusChanged(class UGGJ2025InteractableComponent* component);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTalkingPassengerChanged(class AGGJ2025Passenger* passenger);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHeldItemChanged(class AGGJ2025Item* newItem);
+
+	UFUNCTION(BlueprintCallable)
+	void GiveItem(TSubclassOf<class AGGJ2025Item> itemClass);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveHeldItem(bool bDestroy);
+
+	UFUNCTION(BlueprintCallable)
+	void SetHeldItem(class AGGJ2025Item* newItem);
+
+	UFUNCTION(BlueprintCallable)
+	bool CanConfirmWhileTalking() const;
+
 protected:
 
 	UFUNCTION(Category = Character)
 	virtual void Interact();
+
+	UFUNCTION(Category = Character)
+	virtual void Cancel();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -70,10 +102,21 @@ protected:
 
 public:
 	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return NewCamera; }
+	FORCEINLINE class UGGJ2025CameraComponent* GetFollowCamera() const { return NewCamera; }
+
+	UFUNCTION(BlueprintCallable)
+	class UGGJ2025InteractableComponent* GetInteractableInFocus() const { return InteractableInFocus;	}
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
 	class AGGJ2025Passenger* FollowingPassenger;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
+	class AGGJ2025Passenger* TalkingPassenger;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
+	class AGGJ2025Item* HeldItem;
+
+	void SetTalkingPassenger(class AGGJ2025Passenger* talkingPassenger);
 
 private:
 
