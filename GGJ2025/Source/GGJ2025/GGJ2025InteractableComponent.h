@@ -8,7 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionEvent, class AGGJ2025Character*, character);
 
-UCLASS(minimalapi, meta = (BlueprintSpawnableComponent))
+UCLASS(minimalapi, BlueprintType, meta = (BlueprintSpawnableComponent))
 class UGGJ2025InteractableComponent : public USceneComponent
 {
 	GENERATED_BODY()

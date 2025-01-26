@@ -157,14 +157,11 @@ void AGGJ2025Character::Interact()
 {
 	if (TalkingPassenger)
 	{
-		if (FollowingPassenger != nullptr)
+		if (FollowingPassenger == nullptr)
 		{
-			FollowingPassenger->StopFollowPlayer();
-			
+			TalkingPassenger->StartFollowPlayer(this);
+			SetTalkingPassenger(nullptr);
 		}
-
-		TalkingPassenger->StartFollowPlayer(this);
-		SetTalkingPassenger(nullptr);
 	}
 	else if (InteractableInFocus != nullptr)
 	{
