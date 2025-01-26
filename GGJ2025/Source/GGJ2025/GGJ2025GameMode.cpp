@@ -84,6 +84,7 @@ void AGGJ2025GameMode::SpawnLevel(int32 levelIndex, APlayerSpawningStation* spaw
 
 float AGGJ2025GameMode::EvaluateLevel()
 {
+	static float constexpr c_PerfectResult = 1.0f;
 	float result = 0.f;
 
 	auto spawnedPassengers = m_SpawningStation->GetSpawnedPassengers();
@@ -93,6 +94,12 @@ float AGGJ2025GameMode::EvaluateLevel()
 		auto trait = passenger->Traits;
 
 		int32 nbGoals = trait.WantsTraits.Num() + trait.DoesNotWantTraits.Num() + trait.PlaceableNeeds.Num();
+		if (nbGoals == 0)
+		{
+			result += c_PerfectResult;
+			continue;
+		}
+
 		int32 nbCompletedGoals = 0;
 		// Iterate over want traits
 		for (auto wantTrait : trait.WantsTraits)
