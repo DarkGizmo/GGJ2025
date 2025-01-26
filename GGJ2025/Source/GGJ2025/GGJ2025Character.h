@@ -105,6 +105,9 @@ public:
 	FORCEINLINE class UGGJ2025CameraComponent* GetFollowCamera() const { return NewCamera; }
 
 	UFUNCTION(BlueprintCallable)
+	void RefreshInteractableInFocus();
+
+	UFUNCTION(BlueprintCallable)
 	class UGGJ2025InteractableComponent* GetInteractableInFocus() const { return InteractableInFocus;	}
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
