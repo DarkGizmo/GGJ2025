@@ -9,37 +9,17 @@ APlayerSpawningStation::APlayerSpawningStation()
 
 AGGJ2025Passenger* APlayerSpawningStation::SpawnPassenger()
 {
-    FActorSpawnParameters SpawnParams;
-    SpawnParams.Owner = nullptr;          // Specify the owner, if any
-    SpawnParams.Instigator = nullptr;     // Specify the instigator, if needed
-    SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+    SpawnPassengerInternal(SpawningClass);
 
-    FTransform spawnTransform;
-    if (SpawningLocations.Num() > 0)
+    return SpawnedPassengers.Last();
+}
+
+void APlayerSpawningStation::SpawnPassengers(TArray<TSubclassOf<class AGGJ2025Passenger>> passengers)
+{
+    for (auto It = passengers.CreateIterator(); It; ++It)
     {
-        if (USceneComponent* component = 
-            SpawningLocations[FMath::Min(SpawnedPassengers.Num(), SpawningLocations.Num() - 1)])
-        {
-            spawnTransform = component->GetComponentTransform();
-        }
-        else
-        {
-            spawnTransform = GetActorTransform();
-        }
+        SpawnPassengerInternal(*It);
     }
-    else
-    {
-        spawnTransform = GetActorTransform();
-    }
-
-    // Spawn the actor
-    AGGJ2025Passenger* newPassenger = 
-        GetWorld()->SpawnActor<AGGJ2025Passenger>(SpawningClass
-            , spawnTransform.GetLocation(), spawnTransform.GetRotation().Rotator(), SpawnParams);
-
-    SpawnedPassengers.Add(newPassenger);
-
-    return newPassenger;
 }
 
 void APlayerSpawningStation::SendPassengersToWaitingDestinations()
@@ -74,4 +54,43 @@ void APlayerSpawningStation::ClearPassengers()
     }
 
     SpawnedPassengers.Empty();
+}
+
+TArray<class AGGJ2025Passenger*> APlayerSpawningStation::GetSpawnedPassengers()
+{
+    return SpawnedPassengers;
+}
+
+void APlayerSpawningStation::SpawnPassengerInternal(TSubclassOf<class AGGJ2025Passenger> passenger)
+{
+    FActorSpawnParameters SpawnParams;
+    SpawnParams.Owner = nullptr;          // Specify the owner, if any
+    SpawnParams.Instigator = nullptr;     // Specify the instigator, if needed
+    SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+    FTransform spawnTransform;
+    if (SpawningLocations.Num() > 0)
+    {
+        if (USceneComponent* component =
+            SpawningLocations[FMath::Min(SpawnedPassengers.Num(), SpawningLocations.Num() - 1)])
+        {
+            spawnTransform = component->GetComponentTransform();
+        }
+        else
+        {
+            spawnTransform = GetActorTransform();
+        }
+    }
+    else
+    {
+        spawnTransform = GetActorTransform();
+    }
+
+    // Spawn the actor
+    AGGJ2025Passenger* newPassenger =
+        GetWorld()->SpawnActor<AGGJ2025Passenger>(passenger
+            , spawnTransform.GetLocation(), spawnTransform.GetRotation().Rotator(), SpawnParams);
+
+    SpawnedPassengers.Add(newPassenger);
+    OnPassengerSpawned(newPassenger);
 }

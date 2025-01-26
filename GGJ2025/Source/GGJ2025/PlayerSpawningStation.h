@@ -25,13 +25,24 @@ public:
 	class AGGJ2025Passenger* SpawnPassenger();
 
 	UFUNCTION(BlueprintCallable)
+	void SpawnPassengers(TArray<TSubclassOf<class AGGJ2025Passenger>> passengers);
+
+	UFUNCTION(BlueprintCallable)
 	void SendPassengersToWaitingDestinations();
 
 	UFUNCTION(BlueprintCallable)
 	void ClearPassengers();
 
+	UFUNCTION(BlueprintCallable)
+	TArray<class AGGJ2025Passenger*> GetSpawnedPassengers();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPassengerSpawned(class AGGJ2025Passenger* passenger);
+
 private:
-	UPROPERTY(Transient)
+	void SpawnPassengerInternal(TSubclassOf<class AGGJ2025Passenger> passenger);
+
+	UPROPERTY(Transient, BlueprintReadOnly)
 	TArray<class AGGJ2025Passenger*> SpawnedPassengers;
 };
 

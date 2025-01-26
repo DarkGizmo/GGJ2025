@@ -47,6 +47,21 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void GoToDestination(const FVector& location, const FRotator& rotation);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
+	class AGGJ2025Item* HeldItem;
+
+	UFUNCTION(BlueprintCallable)
+	void SetHeldItem(class AGGJ2025Item* newItem);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetSeat(class UTrainSeatComponent* seat);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveHeldItem(bool bDestroy);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHeldItemChanged(class AGGJ2025Item* newItem);
+
 protected:
 
 	UFUNCTION()
@@ -65,7 +80,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	bool bShowThoughts = false;
 
+	UPROPERTY(Transient)
 	class AGGJ2025Character* PlayerToFollow;
+
+	UPROPERTY(Transient)
+	class UTrainSeatComponent* Seat;
 
 };
 
