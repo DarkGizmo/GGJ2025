@@ -59,6 +59,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnInteractibleInFocusChanged(class UGGJ2025InteractableComponent* component);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTalkingPassengerChanged(class AGGJ2025Passenger* passenger);
+
 protected:
 
 	UFUNCTION(Category = Character)
@@ -84,6 +87,11 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
 	class AGGJ2025Passenger* FollowingPassenger;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Transient)
+	class AGGJ2025Passenger* TalkingPassenger;
+
+	void SetTalkingPassenger(class AGGJ2025Passenger* talkingPassenger);
 
 private:
 

@@ -38,7 +38,7 @@ public:
 
 	void ShowThoughts(bool bVisible);
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	FText GetSpeechText() const;
 
 	UFUNCTION(BlueprintCallable)

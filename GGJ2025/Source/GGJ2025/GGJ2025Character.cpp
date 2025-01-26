@@ -155,7 +155,18 @@ void AGGJ2025Character::Tick(float DeltaTime)
 
 void AGGJ2025Character::Interact()
 {
-	if (InteractableInFocus != nullptr)
+	if (TalkingPassenger)
+	{
+		if (FollowingPassenger != nullptr)
+		{
+			FollowingPassenger->StopFollowPlayer();
+			
+		}
+
+		TalkingPassenger->StartFollowPlayer(this);
+		SetTalkingPassenger(nullptr);
+	}
+	else if (InteractableInFocus != nullptr)
 	{
 		InteractableInFocus->OnInteractionEvent.Broadcast(this);
 		InteractableInFocus->OnInteract(this);
@@ -164,7 +175,10 @@ void AGGJ2025Character::Interact()
 
 void AGGJ2025Character::Cancel()
 {
-	// TODO
+	if (TalkingPassenger)
+	{
+		SetTalkingPassenger(nullptr);
+	}
 }
 
 void AGGJ2025Character::Move(const FInputActionValue& Value)
@@ -172,7 +186,7 @@ void AGGJ2025Character::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (NewCamera != nullptr)
+	if (NewCamera != nullptr && TalkingPassenger == nullptr)
 	{
 		// find out which way is forward
 		const FRotator Rotation = NewCamera->GetComponentRotation();
@@ -189,3 +203,32 @@ void AGGJ2025Character::Move(const FInputActionValue& Value)
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
+
+void AGGJ2025Character::SetTalkingPassenger(class AGGJ2025Passenger* talkingPassenger)
+{
+	AGGJ2025Passenger* oldTalkingPassenger = TalkingPassenger;
+	if (talkingPassenger != TalkingPassenger)
+	{
+		TalkingPassenger = talkingPassenger;
+
+		// Camera focus
+		if (TalkingPassenger != nullptr)
+		{
+			USceneComponent* target = TalkingPassenger->FindComponentByTag<USceneComponent>(TEXT("Camera"));
+
+			if (target == nullptr)
+			{
+				target = TalkingPassenger->GetRootComponent();
+			}
+
+			GetFollowCamera()->ChangeFocusTarget(target, FTransform::Identity, true, -1.0f);
+		}
+		else if(GetFollowCamera()->HasFocusTarget() && GetFollowCamera()->GetFocusTarget() != nullptr && GetFollowCamera()->GetFocusTarget()->GetOwner() == oldTalkingPassenger)
+		{
+			GetFollowCamera()->ReturnFocus();
+		}
+
+		OnTalkingPassengerChanged(TalkingPassenger);
+	}
+}
+

@@ -116,35 +116,8 @@ void AGGJ2025Passenger::OnInteract(class AGGJ2025Character* character)
 {
 	BP_OnInteract();
 
-	if (character != nullptr)
+	if (character != nullptr && character->TalkingPassenger == nullptr)
 	{
-		// Camera focus
-		/*
-		if (character->GetFollowCamera() != nullptr)
-		{
-			if (character->GetFollowCamera()->HasFocusTarget())
-			{
-				character->GetFollowCamera()->ReturnFocus();
-			}
-			else
-			{
-				character->GetFollowCamera()->ChangeFocusTarget(GetRootComponent(), FTransform::Identity, true, -1.0f);
-			}
-		}
-		*/
-		
-		if (PlayerToFollow != nullptr)
-		{
-			PlayerToFollow->FollowingPassenger = nullptr;
-		}
-
-		if (character == PlayerToFollow)
-		{
-			StopFollowPlayer();
-		}
-		else
-		{
-			StartFollowPlayer(character);
-		}
+		character->SetTalkingPassenger(this);
 	}
 }
