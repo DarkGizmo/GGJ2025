@@ -44,6 +44,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	class UGGJ2025InteractableComponent* GetInteractionComponent() const { return InteractionComponent; }
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void GoToDestination(const FVector& location, const FRotator& rotation);
+
 protected:
 
 	UFUNCTION()
