@@ -15,10 +15,10 @@ Unique passengers: From VIPs to magazine-loving grannies and crying babies, ever
 Engaging progression: New mechanics and surprises with every level.
 Intuitive visuals: Clear pictograms and accessible gameplay for everyone.
 
-##### This game has been developed in 48 hours during the Global Game Jam 2025 #####
+###### This game has been developed in 48 hours during the Global Game Jam 2025 ######
 
 
-# Crédits #
+## Crédits ##
 
 #### 3D Environment Artists: #### 
 Alexandre Adam-Goyette, Youssef Jazmati
