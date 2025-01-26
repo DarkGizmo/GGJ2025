@@ -9,3 +9,8 @@ FText UGGJ2025InteractableComponent::GetInteractText_Implementation(class AGGJ20
 {
 	return InteractionText;
 }
+
+bool UGGJ2025InteractableComponent::IsInteractible_Implementation(class AGGJ2025Character* character) const
+{
+	return true;
+}
