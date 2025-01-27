@@ -1,7 +1,7 @@
 # Train of Thoughts #
 
-Welcome aboard Train of Thoughts! You will step into the shoes of the Thoughtful Ticketmaster tasked with ensuring 
-harmonious journeys for a colorful cast of passengers. Using your psychic abilities, you'll read their thoughts, 
+All aboard Train of Thoughts! Step into the shoes of the Thoughtful Ticketmaster gifted with the extraordinairy hability to read minds.
+You will be tasked with ensuring harmonious journeys for a colorful cast of passengers. Using your psychic abilities, you'll read their thoughts, 
 listen to their needs, and pay attention to their quirks to assign the perfect seats and keep the train running smoothly.
 
 ### How to Play ##
