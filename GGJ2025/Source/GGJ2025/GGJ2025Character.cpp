@@ -269,7 +269,11 @@ void AGGJ2025Character::Interact()
 	else if (InteractableInFocus != nullptr)
 	{
 		InteractableInFocus->OnInteractionEvent.Broadcast(this);
-		InteractableInFocus->OnInteract(this);
+
+		if (InteractableInFocus != nullptr)
+		{
+			InteractableInFocus->OnInteract(this);
+		}
 	}
 }
 
