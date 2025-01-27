@@ -175,6 +175,18 @@ void AGGJ2025Character::Tick(float DeltaTime)
 	}
 }
 
+void AGGJ2025Character::RefreshInteractableInFocus()
+{
+	if (InteractableInFocus)
+	{
+		InteractableInFocus->BP_InFocusChanged(false);
+
+		InteractableInFocus = nullptr;
+
+		OnInteractibleInFocusChanged(InteractableInFocus);
+	}
+}
+
 void AGGJ2025Character::GiveItem(TSubclassOf<class AGGJ2025Item> itemClass)
 {
 	FActorSpawnParameters SpawnParams;
